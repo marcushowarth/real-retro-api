@@ -1,0 +1,28 @@
+####
+# Native runtime image for real-retro-api — the deploy artifact.
+#
+# ubi9-minimal base: its glibc matches the ubi9 Mandrel builder
+# (quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-25). The smaller
+# quarkus-micro-image:2.0 is UBI8-based and is too old to run a ubi9 binary
+# (GLIBC_2.34 not found).
+#
+# Runtime-only: build the native binary first, then this image wraps it.
+#   mvn package -Dnative -Dquarkus.native.container-build=true \
+#       -Dquarkus.native.builder-image=quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-25
+#   docker build -f src/main/docker/Dockerfile.native -t real-retro-api .
+#
+# On the EC2 the container is bound to 127.0.0.1 and fronted by Caddy; build
+# metadata is injected at run time:
+#   docker run -e APP_GIT_SHA=<sha> -e APP_BUILT_AT=<iso8601> ...
+####
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4
+WORKDIR /work/
+RUN chown 1001 /work \
+    && chmod "g+rwX" /work \
+    && chown 1001:root /work
+COPY --chown=1001:root target/*-runner /work/application
+
+EXPOSE 8090
+USER 1001
+
+ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0", "-Dquarkus.http.port=8090"]
