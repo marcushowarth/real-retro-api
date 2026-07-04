@@ -1,0 +1,23 @@
+# Add this site block to the EC2 Caddyfile (the global one fronting the box).
+#
+# DNS: real-retro.howarth.eu  A record -> the EC2. Caddy auto-provisions TLS
+# once DNS resolves.
+#
+# /q/health is NOT exposed publicly — health is checked internally against
+# 127.0.0.1:8084/q/health. Only the UI and /api/* are public.
+
+real-retro.howarth.eu {
+    encode gzip
+
+    # API -> native real-retro-api container (bound to 127.0.0.1:8084)
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8084
+    }
+
+    # UI -> static React build, with SPA history-mode fallback
+    handle {
+        root * /srv/retro-ui
+        try_files {path} /index.html
+        file_server
+    }
+}

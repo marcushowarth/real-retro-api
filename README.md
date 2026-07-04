@@ -64,10 +64,12 @@ directly; the front end also proxies `/api` to `:8090`.
 
 ## Deploy
 
-Not yet deployed. Once a domain is chosen, this follows the same shape as
-[fin-optics-api](https://github.com/marcushowarth/fin-optics-api#deploy):
 GitHub Actions builds the native image, pushes it to ECR, and restarts the
-container on EC2 behind Caddy.
+container on EC2 (`127.0.0.1:8084`). Caddy fronts it at
+[real-retro.howarth.eu](https://real-retro.howarth.eu), serving the UI as
+static files and reverse-proxying `/api` to this service — same origin, no
+CORS needed in production. See `deploy/README.md` for the one-time setup
+checklist (ECR repo, GH secrets, EC2 dir, Caddy snippet).
 
 ## Privacy
 
