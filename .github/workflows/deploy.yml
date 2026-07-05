@@ -7,6 +7,11 @@ on:
       - '**.md'
       - 'LICENSE'
       - '.github/**'
+  schedule:
+    # Weekly redeploy to pick up the freshest fin-model-rpi SNAPSHOT
+    # (fin-model refreshes ONS data on its own weekly schedule, see
+    # fin-model's update-ons-data.yml). -U below forces the snapshot refetch.
+    - cron: '0 7 * * 4'   # every Thursday, 07:00 UTC
 
 env:
   AWS_REGION: eu-west-2
@@ -40,7 +45,7 @@ jobs:
           MAVEN_USERNAME: ${{ github.actor }}
           MAVEN_PASSWORD: ${{ secrets.PACKAGES_TOKEN }}
         run: >
-          mvn --batch-mode verify -Dnative
+          mvn --batch-mode verify -U -Dnative
           -Dquarkus.native.container-build=true
           -Dquarkus.native.builder-image=quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-25
 
