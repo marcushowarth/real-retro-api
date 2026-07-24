@@ -16,6 +16,10 @@ on:
                           # so changes to this very file (e.g. testing a caching tweak)
                           # can't self-trigger a run any other way
 
+permissions:
+  contents: read
+  packages: write   # GHCR push via the built-in GITHUB_TOKEN — no PAT to manage
+
 env:
   IMAGE: ghcr.io/marcushowarth/real-retro
   IMAGE_TAG: ${{ github.sha }}
