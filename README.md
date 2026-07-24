@@ -64,12 +64,12 @@ directly; the front end also proxies `/api` to `:8090`.
 
 ## Deploy
 
-GitHub Actions builds the native image, pushes it to ECR, and restarts the
-container on EC2 (`127.0.0.1:8084`). Caddy fronts it at
+GitHub Actions builds the native image, pushes it to GHCR, and restarts the
+container on the host (`127.0.0.1:8084`). Caddy fronts it at
 [real-retro.howarth.eu](https://real-retro.howarth.eu), serving the UI as
 static files and reverse-proxying `/api` to this service — same origin, no
 CORS needed in production. See `deploy/README.md` for the one-time setup
-checklist (ECR repo, GH secrets, EC2 dir, Caddy snippet).
+checklist (GHCR package, GH secrets, host dir, Caddy snippet).
 
 ## Privacy
 
