@@ -38,6 +38,12 @@ jobs:
           EOF
 
       - name: Build
-        run: mvn package
+        # -U forces a fresh check of the fin-model-rpi SNAPSHOT rather than
+        # trusting a same-day cache — without it, this job can race
+        # fin-model's own push-triggered `mvn deploy` (see its ci.yml) when
+        # both repos are pushed close together, and fail on a real fix that
+        # just hasn't finished publishing yet (hit 2026-09-14, kanban #981).
+        # deploy.yml already does this for the same reason.
+        run: mvn package -U
         env:
           PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
