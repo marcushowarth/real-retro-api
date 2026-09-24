@@ -1,8 +1,9 @@
 package eu.howarth.real.retro.resource;
 
-import eu.howarth.fin.rpi.RpiDataset;
-import eu.howarth.fin.rpi.RpiDatasetLoader;
-import eu.howarth.fin.rpi.RpiEntry;
+import eu.howarth.fin.priceindex.IndexSeries;
+import eu.howarth.fin.priceindex.PriceIndexDataset;
+import eu.howarth.fin.priceindex.PriceIndexDatasetLoader;
+import eu.howarth.fin.priceindex.PriceIndexEntry;
 import eu.howarth.real.retro.dto.AnnualRpiEntry;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -20,13 +21,13 @@ import java.util.Map;
 @Path("/api/rpi")
 public class RpiResource {
 
-    private static final RpiDataset DATASET = RpiDatasetLoader.bundled();
+    private static final PriceIndexDataset DATASET = PriceIndexDatasetLoader.bundled(IndexSeries.RPI);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<AnnualRpiEntry> getAll() {
         return DATASET.entries().stream()
-                .map(RpiEntry::year)
+                .map(PriceIndexEntry::year)
                 .distinct()
                 .sorted()
                 .map(year -> new AnnualRpiEntry(year, DATASET.indexForYear(year)))
@@ -38,7 +39,7 @@ public class RpiResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Integer> latestYear() {
         int latest = DATASET.entries().stream()
-                .mapToInt(RpiEntry::year)
+                .mapToInt(PriceIndexEntry::year)
                 .max()
                 .orElseThrow(() -> new IllegalStateException("RPI dataset is empty"));
         return Map.of("year", latest);
