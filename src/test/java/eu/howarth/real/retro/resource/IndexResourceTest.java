@@ -63,6 +63,41 @@ class IndexResourceTest {
     }
 
     @Test
+    void rpiMillennium_reachesBackTo1209() {
+        given()
+                .when().get("/api/index/rpi-millennium")
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0))
+                .body("[0].year", equalTo(1209));
+    }
+
+    @Test
+    void rpiMillennium_isSplicedToThePresentDay_notStuckAt2016() {
+        int rpiMillenniumLatest = given()
+                .when().get("/api/index/rpi-millennium")
+                .then().extract().jsonPath().getList("year", Integer.class)
+                .stream().max(Integer::compareTo).orElseThrow();
+
+        int liveRpiLatest = given()
+                .when().get("/api/index/rpi")
+                .then().extract().jsonPath().getList("year", Integer.class)
+                .stream().max(Integer::compareTo).orElseThrow();
+
+        org.junit.jupiter.api.Assertions.assertEquals(liveRpiLatest, rpiMillenniumLatest);
+    }
+
+    @Test
+    void cpiMillennium_reachesBackTo1209() {
+        given()
+                .when().get("/api/index/cpi-millennium")
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0))
+                .body("[0].year", equalTo(1209));
+    }
+
+    @Test
     void unknownSeries_returnsNotFound() {
         given()
                 .when().get("/api/index/gbp")

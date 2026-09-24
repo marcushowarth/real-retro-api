@@ -2,10 +2,13 @@
 
 The REST layer for **REAL RETRO** — a thin, stateless Quarkus-native service
 that wraps the [`fin-model`](https://github.com/marcushowarth/fin-model)
-`priceindex` package. It serves the ONS RPI (CHAW) and CPI (D7BT) series,
-each aggregated to one index value per calendar year, so the front end can
-rebase any historical price/value series into real terms under either
-measure.
+`priceindex` package. It serves the ONS RPI (CHAW) and CPI (D7BT) series
+(1987/88 to present), each aggregated to one index value per calendar year,
+plus `rpi-millennium`/`cpi-millennium` — the same two series spliced back to
+1209 via the Bank of England's "A Millennium of Macroeconomic Data for the
+UK" — so the front end can rebase any historical price/value series into
+real terms under either measure, across nearly the whole of recorded English
+economic history.
 
 No database, no session, no dataset persistence — datasets and data points
 live client-side in the UI's localStorage. Paired with the
@@ -20,7 +23,10 @@ live client-side in the UI's localStorage. Paired with the
 
 ### `GET /api/index/{series}`
 
-`series` is `rpi` or `cpi`. Returns the full annual series:
+`series` is `rpi`, `cpi`, `rpi-millennium`, or `cpi-millennium`. The
+`-millennium` variants are already spliced onto their live counterpart, so
+they reach the present day rather than stopping at the Millennium dataset's
+own 2016 cutoff. Returns the full annual series:
 
 ```json
 [
