@@ -1,10 +1,11 @@
 # real-retro-api
 
 The REST layer for **REAL RETRO** — a thin, stateless Quarkus-native service
-that wraps the [`fin-model`](https://github.com/marcushowarth/fin-model) `rpi`
-module. It serves the ONS RPI CHAW series, aggregated to one index value per
-calendar year, so the front end can rebase any historical price/value series
-into real terms.
+that wraps the [`fin-model`](https://github.com/marcushowarth/fin-model)
+`priceindex` package. It serves the ONS RPI (CHAW) and CPI (D7BT) series,
+each aggregated to one index value per calendar year, so the front end can
+rebase any historical price/value series into real terms under either
+measure.
 
 No database, no session, no dataset persistence — datasets and data points
 live client-side in the UI's localStorage. Paired with the
@@ -13,13 +14,13 @@ live client-side in the UI's localStorage. Paired with the
 ## Stack
 
 - **Quarkus 3.33.1 LTS** on **JDK 25**, compiled to a **native image** (GraalVM/Mandrel, ~20 MiB)
-- `fin-model-rpi` (consumed from GitHub Packages) for the RPI data + adjustment math
+- `fin-model-rpi` (consumed from GitHub Packages) for the RPI/CPI data + adjustment math
 
 ## Endpoints
 
-### `GET /api/rpi`
+### `GET /api/index/{series}`
 
-Returns the full annual series:
+`series` is `rpi` or `cpi`. Returns the full annual series:
 
 ```json
 [
@@ -28,7 +29,7 @@ Returns the full annual series:
 ]
 ```
 
-### `GET /api/rpi/latest-year`
+### `GET /api/index/{series}/latest-year`
 
 ```json
 { "year": 2026 }
