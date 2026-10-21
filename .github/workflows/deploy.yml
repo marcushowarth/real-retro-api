@@ -7,14 +7,13 @@ on:
       - '**.md'
       - 'LICENSE'
       - '.github/**'
-  schedule:
-    # Weekly redeploy to pick up the freshest fin-model-rpi SNAPSHOT
-    # (fin-model refreshes ONS data on its own weekly schedule, see
-    # fin-model's update-ons-data.yml). -U below forces the snapshot refetch.
-    - cron: '0 7 * * 4'   # every Thursday, 07:00 UTC
   workflow_dispatch:     # manual trigger — needed since .github/** is push-ignored above,
                           # so changes to this very file (e.g. testing a caching tweak)
-                          # can't self-trigger a run any other way
+                          # can't self-trigger a run any other way. Also how fin-model's
+                          # CI redeploys this app after publishing a new SNAPSHOT (ONS data
+                          # or code), replacing the old weekly schedule, which GitHub
+                          # auto-disables after 60 days without a commit (kanban #1009).
+                          # -U below forces the snapshot refetch.
 
 permissions:
   contents: read
